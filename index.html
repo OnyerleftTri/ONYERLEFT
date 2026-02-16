@@ -1,57 +1,85 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ONYERLEFT</title>
+
   <link rel="stylesheet" href="https://unpkg.com/98.css" />
+
   <style>
-    body {
-      background-color: #008080;
-      padding: 40px;
-      font-family: "MS Sans Serif", sans-serif;
-    }
-    iframe {
-      width: 100%;
-      max-width: 900px;
-      height: 500px;
-      border: none;
-    }
+    body { background:#008080; padding:24px; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    iframe { width:100%; aspect-ratio:16/9; border:0; background:#000; }
+    .small { font-size: 12px; opacity: 0.85; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
   </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="window">
+      <div class="title-bar">
+        <div class="title-bar-text">ONYERLEFT Media Hub</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+          <button aria-label="Close"></button>
+        </div>
+      </div>
 
-<div class="window" style="max-width: 950px;">
-  <div class="title-bar">
-    <div class="title-bar-text">ONYERLEFT Media Hub</div>
-    <div class="title-bar-controls">
-      <button></button>
-      <button></button>
-      <button></button>
+      <div class="window-body">
+        <p><strong>Latest upload:</strong></p>
+
+        <iframe id="player"
+          src="about:blank"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+
+        <div class="row">
+          <button id="openYt">Open on YouTube</button>
+          <button onclick="window.location.href='https://YOUR_SHOPIFY_URL'">Launch Merch.exe</button>
+        </div>
+
+        <hr />
+        <p class="small" id="status">Loading latest video…</p>
+      </div>
     </div>
   </div>
 
-  <div class="window-body">
-    <h3>Latest Episodes</h3>
+  <script>
+    // Your channel ID (you gave this)
+    const channelId = "UCFfNpob3flZXPEenG-TcnQQ";
 
-    <!-- REPLACE CHANNEL_ID -->
-<iframe
-  src="https://www.youtube.com/embed/videoseries?list=UUFfNpob3flZXPEenG-TcnQQ&playsinline=1&mute=1&autoplay=1"
-  title="ONYERLEFT Latest Uploads"
-  frameborder="0"
-  allow="autoplay; encrypted-media; picture-in-picture"
-  allowfullscreen
-  style="width:100%; max-width:900px; aspect-ratio:16/9; border:0;">
-</iframe>e>
+    // Use a CORS-friendly text proxy so fetch works on GitHub Pages
+    const feedUrl = `https://r.jina.ai/https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
-    <br><br>
+    const statusEl = document.getElementById("status");
+    const player = document.getElementById("player");
+    const openYtBtn = document.getElementById("openYt");
 
-    <!-- REPLACE WITH YOUR SHOPIFY LINK -->
-    <button onclick="window.location.href='https://yourshopifystore.com'">
-      Launch Merch.exe
-    </button>
+    function setPlayer(videoId) {
+      const embed = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&rel=0`;
+      player.src = embed;
+      openYtBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
+      statusEl.textContent = `Loaded latest video: ${videoId}`;
+    }
 
-  </div>
-</div>
-
+    fetch(feedUrl)
+      .then(r => r.text())
+      .then(txt => {
+        const doc = new DOMParser().parseFromString(txt, "text/xml");
+        const firstId = doc.getElementsByTagName("yt:videoId")[0]?.textContent;
+        if (!firstId) throw new Error("No videoId found (no public uploads yet?)");
+        setPlayer(firstId);
+      })
+      .catch(err => {
+        statusEl.textContent = "Couldn’t load the latest video feed. (Either no public videos, or YouTube blocked the feed.)";
+        console.error(err);
+        // Fallback: open channel videos page
+        openYtBtn.onclick = () => window.open("https://www.youtube.com/@ONYERLEFT/videos", "_blank");
+      });
+  </script>
 </body>
 </html>
