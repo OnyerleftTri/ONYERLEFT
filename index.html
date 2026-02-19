@@ -14,70 +14,40 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="window">
-      <div class="title-bar">
-        <div class="title-bar-text">ONYERLEFT Media Hub</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
 
-      <div class="window-body">
-        <p><strong>Latest upload:</strong></p>
-
-        <iframe id="player"
-          src="about:blank"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-
-        <div class="row">
-          <button id="openYt">Open on YouTube</button>
-          <button onclick="window.location.href='https://YOUR_SHOPIFY_URL'">Launch Merch.exe</button>
-        </div>
-
-        <hr />
-        <p class="small" id="status">Loading latest video…</p>
+<div class="wrap">
+  <div class="window">
+    <div class="title-bar">
+      <div class="title-bar-text">ONYERLEFT Media Hub</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize"></button>
+        <button aria-label="Maximize"></button>
+        <button aria-label="Close"></button>
       </div>
     </div>
+
+    <div class="window-body">
+      <p><strong>Latest upload:</strong></p>
+
+      <!-- DIRECT UPLOADS PLAYLIST EMBED — ALWAYS SHOWS MOST RECENT VIDEO -->
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/videoseries?list=UUFfNpob3flZXPEenG-TcnQQ&rel=0&modestbranding=1&iv_load_policy=3&color=white"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+
+      <div class="row">
+        <button onclick="window.open('https://www.youtube.com/@ONYERLEFT/videos', '_blank')">
+          Open on YouTube
+        </button>
+        <button onclick="window.location.href='https://YOUR_SHOPIFY_URL'">Launch Merch.exe</button>
+      </div>
+
+      <hr />
+      <p class="small">Showing most recent uploads playlist.</p>
+    </div>
   </div>
-
-<script>
-  // ✔ Correct channel ID (UC... not UU...)
-  const channelId = "UCFfNpob3flZXPEenG-TcnQQ";
-
-  // Feed URL using CORS-friendly relay
-  const feedUrl = `https://r.jina.ai/https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-
-  = document.getElementById("player");
-  const openYtBtn = document.getElementById("openYt");
-
-  function setPlayer(videoId) {
-    const embed = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&rel=0`;
-    player.src = embed;
-    openYtBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
-    statusEl.textContent = `Loaded latest video: ${videoId}`;
-  }
-
-  fetch(feedUrl)
-    .then(r => r.text())
-    .then(txt => {
-      const doc = new DOMParser().parseFromString(txt, "text/xml");
-      const firstId = doc.getElementsByTagName("yt:videoId")[0]?.textContent;
-
-      if (!firstId) throw new Error("No videoId found");
-      setPlayer(firstId);
-    })
-    .catch(err => {
-      statusEl.textContent = "Couldn’t load the latest video feed.";
-      console.error(err);
-      openYtBtn.onclick = () =>
-        window.open("https://www.youtube.com/@ONYERLEFT/videos", "_blank");
-    });
-</script>
+</div>
 
 </body>
 </html>
