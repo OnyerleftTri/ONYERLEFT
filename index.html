@@ -4,9 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ONYERLEFT</title>
-
   <link rel="stylesheet" href="https://unpkg.com/98.css" />
-
   <style>
     body { background:#008080; padding:24px; }
     .wrap { max-width: 980px; margin: 0 auto; }
@@ -15,7 +13,6 @@
     .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <div class="window">
@@ -48,38 +45,39 @@
     </div>
   </div>
 
-  <script>
-    // Your channel ID (you gave this)
-    const channelId = "UUFfNpob3flZXPEenG-TcnQQ";
+<script>
+  // ✔ Correct channel ID (UC... not UU...)
+  const channelId = "UCFfNpob3flZXPEenG-TcnQQ";
 
-    // Use a CORS-friendly text proxy so fetch works on GitHub Pages
-    const feedUrl = `https://r.jina.ai/https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+  // Feed URL using CORS-friendly relay
+  const feedUrl = `https://r.jina.ai/https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
-    const statusEl = document.getElementById("status");
-    const player = document.getElementById("player");
-    const openYtBtn = document.getElementById("openYt");
+  = document.getElementById("player");
+  const openYtBtn = document.getElementById("openYt");
 
-    function setPlayer(videoId) {
-      const embed = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&rel=0`;
-      player.src = embed;
-      openYtBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
-      statusEl.textContent = `Loaded latest video: ${videoId}`;
-    }
+  function setPlayer(videoId) {
+    const embed = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&rel=0`;
+    player.src = embed;
+    openYtBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
+    statusEl.textContent = `Loaded latest video: ${videoId}`;
+  }
 
-    fetch(feedUrl)
-      .then(r => r.text())
-      .then(txt => {
-        const doc = new DOMParser().parseFromString(txt, "text/xml");
-        const firstId = doc.getElementsByTagName("yt:videoId")[0]?.textContent;
-        if (!firstId) throw new Error("No videoId found (no public uploads yet?)");
-        setPlayer(firstId);
-      })
-      .catch(err => {
-        statusEl.textContent = "Couldn’t load the latest video feed. (Either no public videos, or YouTube blocked the feed.)";
-        console.error(err);
-        // Fallback: open channel videos page
-        openYtBtn.onclick = () => window.open("https://www.youtube.com/@ONYERLEFT/videos", "_blank");
-      });
-  </script>
+  fetch(feedUrl)
+    .then(r => r.text())
+    .then(txt => {
+      const doc = new DOMParser().parseFromString(txt, "text/xml");
+      const firstId = doc.getElementsByTagName("yt:videoId")[0]?.textContent;
+
+      if (!firstId) throw new Error("No videoId found");
+      setPlayer(firstId);
+    })
+    .catch(err => {
+      statusEl.textContent = "Couldn’t load the latest video feed.";
+      console.error(err);
+      openYtBtn.onclick = () =>
+        window.open("https://www.youtube.com/@ONYERLEFT/videos", "_blank");
+    });
+</script>
+
 </body>
 </html>
